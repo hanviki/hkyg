@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.mrbird.febs.hkgf.dao.HospitalDetailTmpMapper">
+
+    <select id="queryCount" resultType="java.lang.Integer">
+        SELECT COUNT(DISTINCT detail_no) from hospital_detail_tmp where status = 0
+    </select>
+    <select id="queryAllNo" resultType="java.lang.String">
+        SELECT detail_no FROM hospital_detail_tmp
+    </select>
+    <insert id="insertByList" useGeneratedKeys="true" parameterType="java.util.List">
+        insert INTO hospital_detail_tmp
+        (id,
+        detail_no,
+        hospital_id,
+        major_catalogues,
+        detail_price,
+        detail_name,
+        detail_xmbm,
+        create_time,
+        status,abc)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (REPLACE(UUID(),'-',''),
+            #{item.FYXH,jdbcType=VARCHAR},
+            "xh",
+            #{item.FYGB,jdbcType=INTEGER},
+            #{item.FYDJ,jdbcType=INTEGER},
+            #{item.FYMC,jdbcType=VARCHAR},
+            #{item.XMBM,jdbcType=VARCHAR},
+            now(),
+            0,
+            #{item.ABC,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+
+    <insert id="insertUserData" useGeneratedKeys="true" parameterType="java.util.List">
+        insert INTO hospital_detail_tmp
+        (id,
+        detail_no,
+        hospital_id,
+        major_catalogues,
+        detail_price,
+        detail_name,
+        detail_xmbm,
+        create_time,
+        status,
+        card_no,
+        user_name)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (REPLACE(UUID(),'-',''),
+            #{item.detailNo,jdbcType=VARCHAR},
+            #{item.hospitalId,jdbcType=VARCHAR},
+            #{item.majorCatalogues,jdbcType=INTEGER},
+            #{item.detailPrice,jdbcType=INTEGER},
+            #{item.detailName,jdbcType=VARCHAR},
+            #{item.detailXmbm,jdbcType=VARCHAR},
+            now(),
+            0,
+            #{item.cardNo},
+            #{item.userName}
+            )
+        </foreach>
+    </insert>
+    <select id="queryByUser" resultType="java.util.Map">
+        select
+        DISTINCT(detail_no) as detailNo,
+        detail_name as detailName
+        from hospital_detail_tmp
+        where card_no=#{hzid} and status = 0
+    </select>
+</mapper>

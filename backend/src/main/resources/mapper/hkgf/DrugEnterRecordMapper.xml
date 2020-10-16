@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cc.mrbird.febs.hkgf.dao.DrugEnterRecordMapper">
+    <select id="queryCount" resultType="java.lang.Integer">
+        select count(id) from drug_enter_record
+    </select>
+    <select id="queryAllNo" resultType="java.lang.String">
+        select YPCD from drug_enter_record
+    </select>
+
+    <insert id="insertByList" useGeneratedKeys="true" parameterType="java.util.List">
+        insert INTO drug_enter_record
+        (id,
+        YPCD,
+        CDMC,
+        PYDM,
+        CDQC,
+        IS_ENTER ,
+        CREATE_TIME)
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (REPLACE(UUID(),'-',''),
+            #{item.YPCD,jdbcType=INTEGER},
+            #{item.CDMC,jdbcType=INTEGER},
+            #{item.PYDM,jdbcType=INTEGER},
+            #{item.CDQC,jdbcType=VARCHAR},
+            0,
+            now())
+        </foreach>
+    </insert>
+    <select id="queryUserData" resultType="java.lang.String">
+        select zy_no from exception_patient where status = 0
+    </select>
+    <update id="updateUserFlag" parameterType="java.lang.String" >
+        update exception_patient set status =1 where zy_no=#{zyh} and status = 0
+    </update>
+</mapper>
